@@ -1,4 +1,5 @@
-import { QuietOcean, rareAnimalsFor, rms, thresholdFor } from "./sound.js";
+import { QuietOcean, rareAnimalsFor, rms, thresholdFor, DESERT_RARE_ANIMALS } from "./sound.js";
+import { desertSpecies, desertRareSettings, desertRareNames, drawDesertScene, drawDesertAnimal } from "./desert.js";
 
 const $ = (id) => document.getElementById(id);
 const canvas = $("ocean");
@@ -17,6 +18,7 @@ let samples;
 let previousTime;
 let time = 0;
 let level = 0;
+let world = "ocean";
 const animals = [];
 const species = ["poisson", "méduse", "banc de crevettes", "étoile de mer", "poisson", "murène", "requin"];
 let nextSpecies = 0;
@@ -148,18 +150,40 @@ function sensitivity() {
 $("sensitivity").addEventListener("input", sensitivity);
 sensitivity();
 window.addEventListener("pagehide", () => {
-  stream?.getTracks().forEach((track) => track.stop());
-  audioContext?.close().catch((error) => console.error("Impossible de fermer le microphone :", error));
+  if (mode === "micro" && stream) {
+    paused = true;
+    $("pause").disabled = false;
+    $("pause").innerHTML = "▷ <span>Reprendre</span>";
+    $("mode-badge").textContent = "EN PAUSE";
+    notice("Exploration en pause. Le micro est éteint et les animaux t'attendent.");
+  }
+  releaseMicro().catch((error) => console.error("Impossible de fermer le microphone :", error));
 });
 document.addEventListener("visibilitychange", () => { previousTime = undefined; });
 
-function addAnimal() {
+function addAnimal(restored = false) {
   const direction = Math.random() > 0.5 ? 1 : -1;
-  const kind = species[nextSpecies++ % species.length];
+  const choices = world === "desert" ? desertSpecies : species;
+  const kind = choices[nextSpecies++ % choices.length];
+  if (world === "desert") {
+    animals.push({
+      kind,
+      x: restored ? .1 + Math.random() * .8 : direction === 1 ? -.07 : 1.07,
+      y: kind === "oiseau" ? .2 + Math.random() * .25 : .65 + Math.random() * .2,
+      size: kind === "fennec" ? 35 : kind === "oiseau" ? 25 : 24 + Math.random() * 8,
+      speed: .012 + Math.random() * .018,
+      direction,
+      phase: Math.random() * Math.PI * 2,
+      leaving: false,
+      age: restored ? 2 : 0,
+      exitAge: 0,
+    });
+    return;
+  }
   const seabed = kind === "étoile de mer" || kind === "murène";
   animals.push({
     kind,
-    x: kind === "étoile de mer" ? 0.3 + Math.random() * 0.4 : seabed || kind === "méduse" ? 0.1 + Math.random() * 0.8 : direction === 1 ? -0.07 : 1.07,
+    x: restored ? .1 + Math.random() * .8 : kind === "étoile de mer" ? 0.3 + Math.random() * 0.4 : seabed || kind === "méduse" ? 0.1 + Math.random() * 0.8 : direction === 1 ? -0.07 : 1.07,
     y: kind === "étoile de mer" ? 1 - 30 / height : seabed ? 0.82 : 0.18 + Math.random() * 0.5,
     size: kind === "requin" ? 50 + Math.random() * 16 : kind === "murène" ? 42 : kind === "banc de crevettes" ? 34 : 20 + Math.random() * 13,
     speed: 0.022 + Math.random() * 0.025,
@@ -167,7 +191,7 @@ function addAnimal() {
     phase: Math.random() * Math.PI * 2,
     palette: palettes[Math.floor(Math.random() * palettes.length)],
     leaving: false,
-    age: 0,
+    age: restored ? 2 : 0,
     exitAge: 0,
   });
 }
@@ -193,25 +217,26 @@ const rareNames = {
   sirène: "une sirène",
 };
 
-function addRareAnimal(kind) {
+function addRareAnimal(kind, restored = false) {
   const direction = Math.random() > 0.5 ? 1 : -1;
-  const settings = rareSettings[kind];
+  const settings = world === "desert" ? desertRareSettings[kind] : rareSettings[kind];
   const still = settings.speed === 0 || kind === "poulpe";
   animals.push({
     kind,
     rare: true,
-    x: still ? .15 + Math.random() * .7 : direction === 1 ? -.1 : 1.1,
-    y: settings.y + (still ? 0 : Math.random() * .1),
+    x: restored || still ? .15 + Math.random() * .7 : direction === 1 ? -.1 : 1.1,
+    y: settings.y + (still || world === "desert" ? 0 : Math.random() * .1),
     size: settings.size,
     speed: settings.speed,
     direction,
     phase: Math.random() * Math.PI * 2,
     leaving: false,
-    age: 0,
+    age: restored ? 2 : 0,
     exitAge: 0,
   });
+  if (restored) return;
   const banner = $("rare-banner");
-  banner.textContent = `✦ Une visite rare : ${rareNames[kind]} !`;
+  banner.textContent = `✦ Une visite rare : ${(world === "desert" ? desertRareNames : rareNames)[kind]} !`;
   banner.classList.remove("show");
   void banner.offsetWidth;
   banner.classList.add("show");
@@ -219,12 +244,19 @@ function addRareAnimal(kind) {
 
 function drawAnimal(animal) {
   const x = animal.x * width;
-  const y = animal.kind === "étoile de mer" ? height - 30 : animal.y * height + Math.sin(time * 1.3 + animal.phase) * (reducedMotion ? 0 : 7);
+  const flies = ["oiseau", "chouette du désert", "phénix"].includes(animal.kind);
+  const y = animal.kind === "étoile de mer" ? height - 30 : animal.y * height + Math.sin(time * 1.3 + animal.phase) * (reducedMotion || (world === "desert" && !flies) ? 0 : 7);
   ctx.save();
   ctx.translate(x, y);
   ctx.scale(animal.direction, 1);
   ctx.globalAlpha = Math.min(animal.age / .25, 1) * (1 - Math.min(animal.exitAge / .45, 1));
   const size = animal.size;
+  if (world === "desert") {
+    ctx.scale(size, size);
+    drawDesertAnimal(ctx, animal, time, reducedMotion);
+    ctx.restore();
+    return;
+  }
   if (animal.kind !== "poisson") {
     ctx.scale(size, size);
     drawSpecies(animal);
@@ -706,7 +738,7 @@ function drawSpecies(animal) {
   }
 }
 
-function drawScene(seconds) {
+function drawOceanScene(seconds) {
   const background = ctx.createLinearGradient(0, 0, 0, height);
   background.addColorStop(0, "#267b80");
   background.addColorStop(.45, "#10505f");
@@ -757,6 +789,11 @@ function drawScene(seconds) {
     ctx.arc(bubble.x * width, bubble.y * height, bubble.radius, 0, Math.PI * 2);
     ctx.stroke();
   }
+}
+
+function drawScene(seconds) {
+  if (world === "desert") drawDesertScene(ctx, width, height, time, reducedMotion);
+  else drawOceanScene(seconds);
   // La boucle dessine de la fin vers le début : la baleine, placée en dernier, reste à l'arrière-plan.
   animals.sort((a, b) => (a.kind === "baleine") - (b.kind === "baleine"));
   for (let i = animals.length - 1; i >= 0; i--) {
@@ -781,6 +818,47 @@ function drawScene(seconds) {
   }
 }
 
+function currentRareAnimals() {
+  return rareAnimalsFor(model.silence, world === "desert" ? DESERT_RARE_ANIMALS : undefined);
+}
+
+function updatePopulation() {
+  const present = animals.filter((animal) => !animal.leaving);
+  const rareCount = present.filter((animal) => animal.rare).length;
+  $("animal-count").textContent = present.length;
+  $("animal-word").textContent = present.length > 1 ? "animaux" : "animal";
+  $("rare-count").textContent = rareCount ? `✦ ${rareCount} rare${rareCount > 1 ? "s" : ""}` : "";
+  const sceneName = world === "desert" ? "Désert" : "Fond marin";
+  canvas.setAttribute("aria-label", present.length ? `${sceneName} : ${present.length} ${present.length > 1 ? "animaux" : "animal"}. Espèces présentes : ${[...new Set(present.map((animal) => animal.kind))].join(", ")}.` : `${sceneName} : aucun animal.`);
+}
+
+function selectWorld(nextWorld) {
+  if (nextWorld === world) return;
+  world = nextWorld;
+  const desert = world === "desert";
+  document.body.dataset.world = world;
+  document.title = desert ? "Le Roi du silence — Le désert s'éveille" : "Le Roi du silence — L'océan s'éveille";
+  $("scene").setAttribute("aria-label", desert ? "Désert animé" : "Fond marin animé");
+  $("scene-label").textContent = desert ? "LE DÉSERT" : "LE FOND MARIN";
+  $("scene-icon").textContent = desert ? "☀" : "≈";
+  $("welcome-icon").textContent = desert ? "☀" : "≈";
+  $("welcome-title").textContent = desert ? "Un désert attend ton silence" : "Un océan attend ton silence";
+  document.querySelectorAll(".world-picker button").forEach((button) => {
+    button.setAttribute("aria-pressed", String(button.dataset.world === world));
+  });
+  animals.length = 0;
+  nextSpecies = 0;
+  for (let i = 0; i < model.count; i++) addAnimal(true);
+  for (const kind of currentRareAnimals()) addRareAnimal(kind, true);
+  $("rare-banner").classList.remove("show");
+  $("rare-banner").textContent = "";
+  updatePopulation();
+}
+
+document.querySelectorAll(".world-picker button").forEach((button) => {
+  button.addEventListener("click", () => selectWorld(button.dataset.world));
+});
+
 function frame(timestamp) {
   const seconds = previousTime === undefined ? 0 : Math.min((timestamp - previousTime) / 1000, .1);
   previousTime = timestamp;
@@ -796,7 +874,7 @@ function frame(timestamp) {
       const count = model.update(level, thresholdFor(Number($("sensitivity").value)), seconds);
       let staying = animals.filter((animal) => !animal.leaving && !animal.rare).length;
       while (staying < count) { addAnimal(); staying++; }
-      const rareKinds = rareAnimalsFor(model.silence);
+      const rareKinds = currentRareAnimals();
       for (const animal of animals) {
         const tooMany = !animal.rare && staying > count;
         const rareScared = animal.rare && !rareKinds.includes(animal.kind);
@@ -809,11 +887,7 @@ function frame(timestamp) {
       for (const kind of rareKinds) {
         if (!animals.some((animal) => animal.rare && !animal.leaving && animal.kind === kind)) addRareAnimal(kind);
       }
-      const present = animals.filter((animal) => !animal.leaving);
-      $("animal-count").textContent = present.length;
-      $("animal-word").textContent = present.length > 1 ? "animaux" : "animal";
-      $("rare-count").textContent = rareKinds.length ? `✦ ${rareKinds.length} rare${rareKinds.length > 1 ? "s" : ""}` : "";
-      canvas.setAttribute("aria-label", present.length ? `Fond marin : ${present.length} animaux. Espèces présentes : ${[...new Set(present.map((animal) => animal.kind))].join(", ")}.` : "Fond marin : aucun animal.");
+      updatePopulation();
       $("scene-message").textContent = model.quiet ? "Le calme s'installe, la vie revient…" : "Un peu de douceur… les animaux se cachent.";
       $("sound-label").textContent = model.quiet ? "C'est tout calme" : "Les animaux se cachent";
       $("sound-fill").style.width = `${Math.min(level / .15, 1) * 100}%`;

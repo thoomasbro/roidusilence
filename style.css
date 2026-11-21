@@ -8,18 +8,25 @@ button, input { font: inherit; }
 button { cursor: pointer; }
 button:disabled { cursor: default; opacity: .4; }
 button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid #d7eda3; outline-offset: 5px; }
-.topbar { position: fixed; top: 22px; left: 26px; z-index: 1; }
+.topbar { position: fixed; top: max(22px, env(safe-area-inset-top)); left: max(26px, env(safe-area-inset-left)); z-index: 1; }
+.world-picker { position: fixed; top: max(26px, env(safe-area-inset-top)); right: max(26px, env(safe-area-inset-right)); z-index: 3; display: flex; padding: 4px; gap: 3px; border: 1px solid #ffffff36; border-radius: 30px; background: #102b32a6; }
+.world-picker button { border: 0; border-radius: 24px; padding: 9px 14px; background: transparent; color: #e7f2e7; font-size: 11px; }
+.world-picker button[aria-pressed="true"] { background: #e5efdc; color: #253f38; }
+.world-picker button:hover:not([aria-pressed="true"]) { background: #ffffff20; }
 .brand { display: flex; align-items: center; gap: 13px; color: #e8f0dd; text-decoration: none; font-family: "Fraunces", Georgia, serif; font-size: 23px; }
 .brand-icon { display: grid; place-items: center; border: 1px solid #a9c7ad50; border-radius: 14px; width: 44px; height: 44px; color: #d5e5b4; font-size: 32px; }
 .brand-caption { display: block; margin-top: 6px; font: 8px "DM Sans", sans-serif; letter-spacing: 2px; color: #95afb3; }
 .ocean { position: fixed; inset: 0; overflow: hidden; background: #07505a; }
 canvas { width: 100%; height: 100%; display: block; }
-.scene-top, .scene-bottom { position: absolute; left: 26px; right: 26px; display: flex; justify-content: space-between; align-items: center; pointer-events: none; }
+.scene-top, .scene-bottom { position: absolute; left: max(26px, env(safe-area-inset-left)); right: max(26px, env(safe-area-inset-right)); display: flex; justify-content: space-between; align-items: center; pointer-events: none; }
 .scene-top { top: 85px; }
 .scene-label { font-size: 9px; letter-spacing: 2px; display: flex; gap: 9px; align-items: center; }
-.scene-label > span { font-size: 22px; color: #bde4d8; }
+.scene-label > span:first-child { font-size: 22px; color: #bde4d8; }
 .mode-badge { font-size: 8px; letter-spacing: 1.5px; background: #072d3e65; border: 1px solid #d9efde2a; padding: 8px 12px; border-radius: 30px; }
 .welcome { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(ellipse, #06303e85, transparent 70%); text-align: center; padding: 20px; }
+body[data-world="desert"] .welcome { background: radial-gradient(ellipse, #422c2685, transparent 70%); }
+body[data-world="desert"] .settings { background: #493328ed; border-color: #e9cba440; }
+body[data-world="desert"] .welcome p, body[data-world="desert"] .text-button { color: #f5e1c8; }
 .welcome[hidden] { display: none; }
 .welcome-icon { font-size: 45px; color: #c7e0c7; line-height: 1; margin-bottom: 16px; }
 h2 { font: 400 29px "Fraunces", Georgia, serif; margin: 0 0 11px; }
@@ -27,7 +34,7 @@ h2 { font: 400 29px "Fraunces", Georgia, serif; margin: 0 0 11px; }
 .primary { border: 0; background: #d4e7b1; color: #173c38; padding: 15px 21px; border-radius: 9px; font-size: 12px; font-weight: 700; display: flex; gap: 13px; align-items: center; box-shadow: 0 5px 25px #002c3840; }
 .primary:hover { background: #e5f3c8; }
 .text-button { background: transparent; border: 0; color: #b1cdcb; font-size: 10px; padding: 14px; text-decoration: underline; text-underline-offset: 4px; }
-.scene-bottom { bottom: 24px; right: auto; gap: 20px; font-size: 12px; color: #c4dfdd; }
+.scene-bottom { bottom: max(24px, env(safe-area-inset-bottom)); right: calc(430px + env(safe-area-inset-right)); flex-wrap: wrap; gap: 10px 20px; font-size: 12px; color: #c4dfdd; }
 .scene-bottom > div { display: flex; align-items: center; gap: 9px; }
 .live-dot { width: 6px; height: 6px; background: #d5e7b3; border-radius: 50%; box-shadow: 0 0 12px #d5e7b366; }
 .animal-count { background: #052c3966; padding: 9px 13px; border-radius: 8px; }
@@ -36,7 +43,7 @@ h2 { font: 400 29px "Fraunces", Georgia, serif; margin: 0 0 11px; }
 .rare-banner { position: absolute; top: 18%; left: 50%; transform: translate(-50%, -10px); opacity: 0; pointer-events: none; padding: 14px 24px; border-radius: 40px; background: #0a2f3dcc; border: 1px solid #f3d48a66; color: #f7e3ad; font: 400 clamp(17px, 2.4vw, 24px) "Fraunces", Georgia, serif; text-align: center; max-width: calc(100% - 40px); }
 .rare-banner.show { animation: rare-arrival 4s ease forwards; }
 @keyframes rare-arrival { 0% { opacity: 0; transform: translate(-50%, -10px); } 12%, 75% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; transform: translate(-50%, 0); } }
-.settings { position: fixed; z-index: 2; bottom: 18px; right: 22px; width: 390px; max-width: calc(100% - 36px); max-height: calc(100dvh - 110px); overflow: auto; border: 1px solid #91b9bc40; border-radius: 13px; background: #082a36ed; box-shadow: 0 8px 35px #00182044; }
+.settings { position: fixed; z-index: 2; bottom: max(18px, env(safe-area-inset-bottom)); right: max(22px, env(safe-area-inset-right)); width: 390px; max-width: calc(100% - 36px); max-height: calc(100dvh - 110px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); overflow: auto; border: 1px solid #91b9bc40; border-radius: 13px; background: #082a36ed; box-shadow: 0 8px 35px #00182044; }
 .settings summary { cursor: pointer; padding: 16px 20px; font-size: 12px; color: #d5e7b3; }
 .settings summary:focus-visible { outline: 2px solid #d7eda3; outline-offset: -4px; }
 .dashboard { display: grid; grid-template-columns: 1fr auto; gap: 24px 16px; align-items: center; padding: 10px 20px 20px; }
@@ -57,18 +64,45 @@ input[type="range"] { width: 100%; accent-color: #d3e4b2; height: 6px; display: 
 .demo-controls[hidden] { display: none; }
 .demo-controls label, .demo-controls button { white-space: nowrap; }
 .privacy { text-align: center; margin: 0; padding: 0 20px 16px; font-size: 10px; color: #9dbbbf; }
+@media (pointer: coarse) {
+  .world-picker button, .text-button { min-height: 44px; }
+  input[type="range"] { height: 28px; }
+}
 @media (max-width: 700px) {
-  .topbar { top: 18px; left: 18px; }
+  .topbar { top: max(18px, env(safe-area-inset-top)); left: max(18px, env(safe-area-inset-left)); }
   .brand { font-size: 20px; }
-  .scene-top, .scene-bottom { left: 17px; right: 17px; }
-  .scene-bottom { bottom: 85px; font-size: 10px; gap: 12px; }
+  .brand-caption { letter-spacing: 1px; }
+  .world-picker { top: max(18px, env(safe-area-inset-top)); right: max(17px, env(safe-area-inset-right)); }
+  .world-picker button { min-height: 44px; padding: 8px 10px; }
+  .scene-top, .scene-bottom { left: max(17px, env(safe-area-inset-left)); right: max(17px, env(safe-area-inset-right)); }
+  .scene-bottom { bottom: calc(85px + env(safe-area-inset-bottom)); font-size: 10px; gap: 12px; }
   h2 { font-size: 25px; }
-  .settings { right: 18px; bottom: 18px; }
+  .settings { right: max(18px, env(safe-area-inset-right)); bottom: max(18px, env(safe-area-inset-bottom)); max-height: calc(100dvh - 110px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); overscroll-behavior: contain; }
+  .text-button { min-height: 44px; }
+  input[type="range"] { height: 28px; }
+}
+@media (max-width: 430px) {
+  .brand { font-size: 16px; gap: 7px; }
+  .brand-icon { width: 36px; height: 36px; }
+  .brand-caption { font-size: 6px; }
+  .world-picker button { font-size: 10px; padding: 8px; }
+}
+@media (max-width: 360px) {
+  .brand { font-size: 13px; }
+  .brand-caption { display: none; }
 }
 @media (max-height: 480px) {
   .welcome-icon { display: none; }
-  .welcome p { margin-bottom: 12px; }
-  .welcome { padding-top: 90px; padding-bottom: 70px; }
+  .welcome { top: 70px; bottom: calc(70px + env(safe-area-inset-bottom)); padding: 0 16px; overflow-y: auto; }
+  .welcome h2 { font-size: 21px; margin-bottom: 4px; }
+  .welcome p { line-height: 1.4; margin-bottom: 8px; }
+  .primary { min-height: 44px; padding: 10px 18px; }
+  .text-button { min-height: 44px; padding: 10px; }
+}
+@media (max-height: 480px) and (min-width: 480px) {
+  .scene-top { display: none; }
+  .scene-bottom { bottom: max(18px, env(safe-area-inset-bottom)); right: calc(290px + env(safe-area-inset-right)); flex-wrap: wrap; gap: 8px; }
+  .settings { width: 250px; }
 }
 @media (prefers-reduced-motion: reduce) {
   #sound-fill { transition: none; }

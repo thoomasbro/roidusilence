@@ -11,9 +11,13 @@ export const RARE_ANIMALS = [
   { seconds: 105, kind: "sous-marin" },
   { seconds: 120, kind: "sirène" },
 ];
+export const DESERT_RARE_ANIMALS = [
+  "dromadaire", "gazelle", "tortue du désert", "suricate",
+  "oryx", "autruche", "chouette du désert", "phénix",
+].map((kind, index) => ({ seconds: RARE_ANIMALS[index].seconds, kind }));
 
-export function rareAnimalsFor(silenceSeconds) {
-  return RARE_ANIMALS.filter((animal) => silenceSeconds >= animal.seconds).map((animal) => animal.kind);
+export function rareAnimalsFor(silenceSeconds, animals = RARE_ANIMALS) {
+  return animals.filter((animal) => silenceSeconds >= animal.seconds).map((animal) => animal.kind);
 }
 
 export function thresholdFor(sensitivity) {

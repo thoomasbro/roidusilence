@@ -5,6 +5,7 @@ const files = new Map([
   ["/", ["index.html", "text/html"]],
   ["/style.css", ["style.css", "text/css"]],
   ["/app.js", ["app.js", "text/javascript"]],
+  ["/desert.js", ["desert.js", "text/javascript"]],
   ["/sound.js", ["sound.js", "text/javascript"]],
 ]);
 const port = Number(process.env.PORT || 3000);

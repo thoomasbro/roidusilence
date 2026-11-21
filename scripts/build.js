@@ -1,6 +1,6 @@
 import { cp, mkdir, rm } from "node:fs/promises";
 
-const sources = ["index.html", "style.css", "app.js", "sound.js"];
+const sources = ["index.html", "style.css", "app.js", "desert.js", "sound.js"];
 
 await rm("dist", { recursive: true, force: true });
 await mkdir("dist", { recursive: true });

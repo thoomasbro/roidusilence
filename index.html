@@ -2,7 +2,7 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#061e2b" />
     <title>Le Roi du silence — L'océan s'éveille</title>
     <link rel="stylesheet" href="./style.css" />
@@ -17,15 +17,20 @@
         </a>
       </header>
 
-      <section class="ocean" aria-label="Fond marin animé">
+      <nav class="world-picker" aria-label="Choisir un univers">
+        <button type="button" data-world="ocean" aria-pressed="true">≈ <span>Océan</span></button>
+        <button type="button" data-world="desert" aria-pressed="false">☀ <span>Désert</span></button>
+      </nav>
+
+      <section id="scene" class="ocean" aria-label="Fond marin animé">
         <canvas id="ocean" aria-label="Poissons, crevettes, étoiles de mer, méduses, murènes, requins et visiteurs rares apparaissent dans le calme"></canvas>
         <div class="scene-top">
-          <span class="scene-label"><span aria-hidden="true">≈</span> LE FOND MARIN</span>
+          <span class="scene-label"><span id="scene-icon" aria-hidden="true">≈</span> <span id="scene-label">LE FOND MARIN</span></span>
           <span id="mode-badge" class="mode-badge">À EXPLORER</span>
         </div>
         <div id="welcome" class="welcome">
-          <span class="welcome-icon" aria-hidden="true">≈</span>
-          <h2>Un océan attend ton silence</h2>
+          <span id="welcome-icon" class="welcome-icon" aria-hidden="true">≈</span>
+          <h2 id="welcome-title">Un océan attend ton silence</h2>
           <p>Installe-toi confortablement,<br />puis laisse la magie du calme agir.</p>
           <button id="start" class="primary"><span aria-hidden="true">◉</span> Commencer l'exploration <span aria-hidden="true">→</span></button>
           <button id="demo" class="text-button">Essayer sans microphone</button>

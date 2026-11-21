@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { QuietOcean, rms, thresholdFor, rareAnimalsFor, MAX_ANIMALS } from "./sound.js";
+import { QuietOcean, rms, thresholdFor, rareAnimalsFor, MAX_ANIMALS, DESERT_RARE_ANIMALS } from "./sound.js";
 
 test("le silence fait arriver un animal en moins d'une seconde", () => {
   const ocean = new QuietOcean();
@@ -58,6 +58,14 @@ test("les animaux rares arrivent par paliers de silence continu", () => {
   assert.deepEqual(rareAnimalsFor(119.9).at(-1), "sous-marin");
   assert.deepEqual(rareAnimalsFor(120).at(-1), "sirène");
   assert.equal(rareAnimalsFor(1000).length, 8);
+});
+
+test("les visiteurs du désert suivent les mêmes paliers de silence", () => {
+  assert.deepEqual(rareAnimalsFor(14.9, DESERT_RARE_ANIMALS), []);
+  assert.deepEqual(rareAnimalsFor(30, DESERT_RARE_ANIMALS), ["dromadaire", "gazelle"]);
+  assert.equal(rareAnimalsFor(119.9, DESERT_RARE_ANIMALS).at(-1), "chouette du désert");
+  assert.equal(rareAnimalsFor(120, DESERT_RARE_ANIMALS).at(-1), "phénix");
+  assert.equal(rareAnimalsFor(120, DESERT_RARE_ANIMALS).length, 8);
 });
 
 test("le bruit remet à zéro la durée de silence continu", () => {
