@@ -55,7 +55,9 @@ test("les animaux rares arrivent par paliers de silence continu", () => {
   assert.deepEqual(rareAnimalsFor(14.9), []);
   assert.deepEqual(rareAnimalsFor(15), ["tortue de mer"]);
   assert.deepEqual(rareAnimalsFor(30), ["tortue de mer", "hippocampe"]);
-  assert.equal(rareAnimalsFor(1000).length, 5);
+  assert.deepEqual(rareAnimalsFor(119.9).at(-1), "sous-marin");
+  assert.deepEqual(rareAnimalsFor(120).at(-1), "sirène");
+  assert.equal(rareAnimalsFor(1000).length, 8);
 });
 
 test("le bruit remet à zéro la durée de silence continu", () => {

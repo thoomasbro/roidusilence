@@ -18,7 +18,7 @@ let previousTime;
 let time = 0;
 let level = 0;
 const animals = [];
-const species = ["poisson", "méduse", "étoile de mer", "poisson", "murène", "requin"];
+const species = ["poisson", "méduse", "banc de crevettes", "étoile de mer", "poisson", "murène", "requin"];
 let nextSpecies = 0;
 const palettes = [["#edbf77", "#d58452"], ["#84cdbb", "#469e9d"], ["#aec9e0", "#659bbd"], ["#e8bcab", "#b5767e"]];
 const bubbles = Array.from({ length: 23 }, () => ({ x: Math.random(), y: Math.random(), radius: 1 + Math.random() * 2, speed: 0.008 + Math.random() * 0.012 }));
@@ -161,7 +161,7 @@ function addAnimal() {
     kind,
     x: kind === "étoile de mer" ? 0.3 + Math.random() * 0.4 : seabed || kind === "méduse" ? 0.1 + Math.random() * 0.8 : direction === 1 ? -0.07 : 1.07,
     y: kind === "étoile de mer" ? 1 - 30 / height : seabed ? 0.82 : 0.18 + Math.random() * 0.5,
-    size: kind === "requin" ? 50 + Math.random() * 16 : kind === "murène" ? 42 : 20 + Math.random() * 13,
+    size: kind === "requin" ? 50 + Math.random() * 16 : kind === "murène" ? 42 : kind === "banc de crevettes" ? 34 : 20 + Math.random() * 13,
     speed: 0.022 + Math.random() * 0.025,
     direction,
     phase: Math.random() * Math.PI * 2,
@@ -178,6 +178,19 @@ const rareSettings = {
   poulpe: { y: .86, size: 30, speed: .01 },
   "raie manta": { y: .28, size: 60, speed: .025 },
   baleine: { y: .3, size: 190, speed: .012 },
+  plongeur: { y: .45, size: 66, speed: .02 },
+  "sous-marin": { y: .22, size: 85, speed: .015 },
+  sirène: { y: .55, size: 75, speed: .022 },
+};
+const rareNames = {
+  "tortue de mer": "une tortue de mer",
+  hippocampe: "un hippocampe",
+  poulpe: "un poulpe",
+  "raie manta": "une raie manta",
+  plongeur: "un plongeur",
+  baleine: "une baleine",
+  "sous-marin": "un sous-marin",
+  sirène: "une sirène",
 };
 
 function addRareAnimal(kind) {
@@ -198,7 +211,7 @@ function addRareAnimal(kind) {
     exitAge: 0,
   });
   const banner = $("rare-banner");
-  banner.textContent = `✦ Un animal rare arrive : ${kind === "tortue de mer" ? "une tortue de mer" : kind === "hippocampe" ? "un hippocampe" : kind === "poulpe" ? "un poulpe" : kind === "raie manta" ? "une raie manta" : "une baleine"} !`;
+  banner.textContent = `✦ Une visite rare : ${rareNames[kind]} !`;
   banner.classList.remove("show");
   void banner.offsetWidth;
   banner.classList.add("show");
@@ -503,6 +516,193 @@ function drawSpecies(animal) {
     ctx.beginPath();
     ctx.arc(.65, .02, .025, 0, Math.PI * 2);
     ctx.fill();
+  } else if (animal.kind === "banc de crevettes") {
+    for (let i = 0; i < 7; i++) {
+      const offset = reducedMotion ? 0 : Math.sin(time * 3 + i * 1.7 + animal.phase) * .08;
+      ctx.save();
+      ctx.translate(((i * 37) % 11) / 11 * 1.6 - .8, ((i * 53) % 7) / 7 * 1.1 - .55 + offset);
+      ctx.scale(.28, .28);
+      ctx.strokeStyle = "#f6b39a";
+      ctx.lineWidth = .25;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.arc(0, 0, .6, Math.PI * .1, Math.PI * 1.1);
+      ctx.stroke();
+      ctx.fillStyle = "#f08f73";
+      ctx.beginPath();
+      ctx.moveTo(-.6, -.05);
+      ctx.lineTo(-1, -.3);
+      ctx.lineTo(-.95, .15);
+      ctx.fill();
+      ctx.strokeStyle = "#f6c7b7";
+      ctx.lineWidth = .06;
+      ctx.beginPath();
+      ctx.moveTo(.55, .2);
+      ctx.quadraticCurveTo(1.1, -.3, 1.4, .1);
+      ctx.stroke();
+      ctx.fillStyle = "#173c38";
+      ctx.beginPath();
+      ctx.arc(.45, .12, .08, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  } else if (animal.kind === "plongeur") {
+    const kick = reducedMotion ? 0 : Math.sin(time * 3 + animal.phase) * .15;
+    ctx.fillStyle = "#f0c35c";
+    ctx.beginPath();
+    ctx.roundRect(-.45, -.3, .7, .2, .08);
+    ctx.fill();
+    ctx.strokeStyle = "#1c3b4a";
+    ctx.lineCap = "round";
+    ctx.lineWidth = .17;
+    ctx.beginPath();
+    ctx.moveTo(-.3, .05);
+    ctx.lineTo(-.85, kick);
+    ctx.moveTo(-.3, .05);
+    ctx.lineTo(-.85, .15 - kick);
+    ctx.stroke();
+    ctx.fillStyle = "#e17d5b";
+    for (const [fy, sign] of [[kick, 1], [.15 - kick, -1]]) {
+      ctx.beginPath();
+      ctx.moveTo(-.85, fy - .08);
+      ctx.lineTo(-1.2, fy + sign * .05 - .15);
+      ctx.lineTo(-1.2, fy + sign * .05 + .1);
+      ctx.lineTo(-.85, fy + .08);
+      ctx.fill();
+    }
+    ctx.fillStyle = "#1c3b4a";
+    ctx.beginPath();
+    ctx.ellipse(0, .02, .45, .15, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.lineWidth = .1;
+    ctx.beginPath();
+    ctx.moveTo(.25, .05);
+    ctx.lineTo(.65, .2);
+    ctx.stroke();
+    ctx.fillStyle = "#f1c4a5";
+    ctx.beginPath();
+    ctx.arc(.55, -.05, .16, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#8fd3e6";
+    ctx.strokeStyle = "#e17d5b";
+    ctx.lineWidth = .04;
+    ctx.beginPath();
+    ctx.ellipse(.65, -.07, .08, .1, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.strokeStyle = "#b6dfdf88";
+    ctx.lineWidth = .025;
+    for (let i = 0; i < 3; i++) {
+      const rise = reducedMotion ? i * .2 : (time * .5 + i * .33 + animal.phase) % 1;
+      ctx.beginPath();
+      ctx.arc(.6 + Math.sin(rise * 8) * .05, -.3 - rise * .9, .04 + i * .015, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+  } else if (animal.kind === "sous-marin") {
+    ctx.fillStyle = "#e9b949";
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 1, .38, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.roundRect(-.2, -.62, .45, .3, .06);
+    ctx.fill();
+    ctx.strokeStyle = "#e9b949";
+    ctx.lineWidth = .05;
+    ctx.beginPath();
+    ctx.moveTo(.1, -.62);
+    ctx.lineTo(.1, -.85);
+    ctx.lineTo(.25, -.85);
+    ctx.stroke();
+    ctx.fillStyle = "#c28f2b";
+    ctx.beginPath();
+    ctx.moveTo(-.95, -.05);
+    ctx.lineTo(-1.25, -.3);
+    ctx.lineTo(-1.25, .25);
+    ctx.lineTo(-.95, .05);
+    ctx.fill();
+    const spin = reducedMotion ? .2 : Math.abs(Math.sin(time * 9));
+    ctx.fillStyle = "#8f6a25";
+    ctx.beginPath();
+    ctx.ellipse(-1.3, 0, .04, .22 * spin + .03, 0, 0, Math.PI * 2);
+    ctx.fill();
+    for (const px of [-.4, 0, .4]) {
+      ctx.fillStyle = "#8a6a24";
+      ctx.beginPath();
+      ctx.arc(px, 0, .14, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#a9e4ee";
+      ctx.beginPath();
+      ctx.arc(px, 0, .1, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    const beam = ctx.createLinearGradient(1, 0, 2.2, 0);
+    beam.addColorStop(0, "#fff7c055");
+    beam.addColorStop(1, "#fff7c000");
+    ctx.fillStyle = beam;
+    ctx.beginPath();
+    ctx.moveTo(.98, 0);
+    ctx.lineTo(2.2, -.4);
+    ctx.lineTo(2.2, .4);
+    ctx.fill();
+  } else if (animal.kind === "sirène") {
+    const swish = reducedMotion ? 0 : Math.sin(time * 2 + animal.phase) * .18;
+    ctx.fillStyle = "#c46a4a";
+    ctx.beginPath();
+    ctx.moveTo(.55, -.3);
+    ctx.quadraticCurveTo(-.1, -.55, -.35, -.25);
+    ctx.quadraticCurveTo(-.1, -.3, .3, -.1);
+    ctx.fill();
+    const tail = ctx.createLinearGradient(-1, 0, .2, 0);
+    tail.addColorStop(0, "#5fc4b0");
+    tail.addColorStop(1, "#3f93a8");
+    ctx.fillStyle = tail;
+    ctx.beginPath();
+    ctx.moveTo(.15, -.12);
+    ctx.quadraticCurveTo(-.4, -.18, -.85, swish);
+    ctx.quadraticCurveTo(-.4, .2, .15, .15);
+    ctx.fill();
+    ctx.fillStyle = "#8ee0cc";
+    ctx.beginPath();
+    ctx.moveTo(-.8, swish);
+    ctx.quadraticCurveTo(-1.1, swish - .4, -1.25, swish - .3);
+    ctx.quadraticCurveTo(-1.05, swish, -1.25, swish + .3);
+    ctx.quadraticCurveTo(-1.1, swish + .4, -.8, swish);
+    ctx.fill();
+    ctx.fillStyle = "#f2c9a8";
+    ctx.beginPath();
+    ctx.ellipse(.3, 0, .2, .13, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#f2c9a8";
+    ctx.lineWidth = .07;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(.35, -.05);
+    ctx.lineTo(.7, -.3 + swish * .3);
+    ctx.stroke();
+    ctx.fillStyle = "#c870a0";
+    for (const sy of [-.05, .06]) {
+      ctx.beginPath();
+      ctx.arc(.37, sy, .055, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.fillStyle = "#f2c9a8";
+    ctx.beginPath();
+    ctx.arc(.58, -.12, .15, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#c46a4a";
+    ctx.beginPath();
+    ctx.arc(.55, -.2, .15, Math.PI * .85, Math.PI * 2.05);
+    ctx.fill();
+    ctx.fillStyle = "#173c38";
+    ctx.beginPath();
+    ctx.arc(.66, -.13, .025, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#f3d48a";
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath();
+      ctx.arc(.47 + i * .09, -.33 + (i === 1 ? -.04 : 0), .03, 0, Math.PI * 2);
+      ctx.fill();
+    }
   }
 }
 

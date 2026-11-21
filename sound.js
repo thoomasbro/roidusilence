@@ -6,7 +6,10 @@ export const RARE_ANIMALS = [
   { seconds: 30, kind: "hippocampe" },
   { seconds: 45, kind: "poulpe" },
   { seconds: 60, kind: "raie manta" },
+  { seconds: 75, kind: "plongeur" },
   { seconds: 90, kind: "baleine" },
+  { seconds: 105, kind: "sous-marin" },
+  { seconds: 120, kind: "sirène" },
 ];
 
 export function rareAnimalsFor(silenceSeconds) {
