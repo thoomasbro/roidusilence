@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#061e2b" />
+    <title>Le Roi du silence — L'océan s'éveille</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script type="module" src="/app.js"></script>
+  </head>
+  <body>
+    <main>
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="Le Roi du silence, accueil">
+          <span class="brand-icon" aria-hidden="true">♧</span>
+          <span>le roi du silence<span class="brand-caption">UN PEU DE CALME, BEAUCOUP DE VIE</span></span>
+        </a>
+      </header>
+
+      <section class="ocean" aria-label="Fond marin animé">
+        <canvas id="ocean" aria-label="Poissons, étoiles de mer, méduses, murènes et requins apparaissent dans le calme"></canvas>
+        <div class="scene-top">
+          <span class="scene-label"><span aria-hidden="true">≈</span> LE FOND MARIN</span>
+          <span id="mode-badge" class="mode-badge">À EXPLORER</span>
+        </div>
+        <div id="welcome" class="welcome">
+          <span class="welcome-icon" aria-hidden="true">≈</span>
+          <h2>Un océan attend ton silence</h2>
+          <p>Installe-toi confortablement,<br />puis laisse la magie du calme agir.</p>
+          <button id="start" class="primary"><span aria-hidden="true">◉</span> Commencer l'exploration <span aria-hidden="true">→</span></button>
+          <button id="demo" class="text-button">Essayer sans microphone</button>
+        </div>
+        <div id="rare-banner" class="rare-banner" role="status" aria-live="polite"></div>
+        <div class="scene-bottom">
+          <div><span class="live-dot"></span><span id="scene-message">Tout commence par un moment de calme</span></div>
+          <span class="animal-count"><strong id="animal-count">0</strong> <span id="animal-word">animal</span> <span id="rare-count" class="rare-count"></span></span>
+        </div>
+      </section>
+
+      <details id="settings" class="settings">
+        <summary>Réglages de l'exploration</summary>
+        <section class="dashboard" aria-label="Réglages de l'exploration">
+        <div class="sound-panel">
+          <div class="panel-heading"><span>LE CALME, EN DIRECT</span><span id="sound-label">Micro désactivé</span></div>
+          <div class="meter"><div id="sound-fill"></div><span id="threshold-marker"></span></div>
+          <div class="meter-labels"><span>Tout doux</span><span>Un peu trop de bruit</span></div>
+        </div>
+        <div class="sensitivity-panel">
+          <label for="sensitivity">SENSIBILITÉ DU MICRO <span id="sensitivity-label">Élevée</span></label>
+          <input id="sensitivity" type="range" min="0" max="100" value="80" />
+          <div class="meter-labels"><span>Plus tolérant</span><span>Plus sensible</span></div>
+        </div>
+        <button id="pause" class="pause-button" disabled>Ⅱ <span>Pause</span></button>
+      </section>
+      <div id="demo-controls" class="demo-controls" hidden>
+        <label for="demo-noise">Bruit simulé</label>
+        <input id="demo-noise" type="range" min="0" max="100" value="5" />
+        <button id="use-micro" class="text-button">Passer au microphone</button>
+      </div>
+      <p id="notice" class="notice" role="status" aria-live="polite">Le microphone reste éteint tant que tu ne commences pas.</p>
+
+        <p class="privacy">Le son reste sur cet appareil. Toujours.</p>
+      </details>
+    </main>
+  </body>
+</html>

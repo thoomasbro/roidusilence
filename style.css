@@ -1,0 +1,76 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:ital,wght@0,400;0,500;1,400&display=swap");
+
+:root { color-scheme: dark; font-family: "DM Sans", system-ui, sans-serif; color: #ecf5ed; background: #061e2b; }
+* { box-sizing: border-box; }
+body { margin: 0; background: radial-gradient(ellipse at 50% 38%, #123b44 0, #061e2b 70%); }
+main { min-height: 100dvh; }
+button, input { font: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: default; opacity: .4; }
+button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid #d7eda3; outline-offset: 5px; }
+.topbar { position: fixed; top: 22px; left: 26px; z-index: 1; }
+.brand { display: flex; align-items: center; gap: 13px; color: #e8f0dd; text-decoration: none; font-family: "Fraunces", Georgia, serif; font-size: 23px; }
+.brand-icon { display: grid; place-items: center; border: 1px solid #a9c7ad50; border-radius: 14px; width: 44px; height: 44px; color: #d5e5b4; font-size: 32px; }
+.brand-caption { display: block; margin-top: 6px; font: 8px "DM Sans", sans-serif; letter-spacing: 2px; color: #95afb3; }
+.ocean { position: fixed; inset: 0; overflow: hidden; background: #07505a; }
+canvas { width: 100%; height: 100%; display: block; }
+.scene-top, .scene-bottom { position: absolute; left: 26px; right: 26px; display: flex; justify-content: space-between; align-items: center; pointer-events: none; }
+.scene-top { top: 85px; }
+.scene-label { font-size: 9px; letter-spacing: 2px; display: flex; gap: 9px; align-items: center; }
+.scene-label > span { font-size: 22px; color: #bde4d8; }
+.mode-badge { font-size: 8px; letter-spacing: 1.5px; background: #072d3e65; border: 1px solid #d9efde2a; padding: 8px 12px; border-radius: 30px; }
+.welcome { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(ellipse, #06303e85, transparent 70%); text-align: center; padding: 20px; }
+.welcome[hidden] { display: none; }
+.welcome-icon { font-size: 45px; color: #c7e0c7; line-height: 1; margin-bottom: 16px; }
+h2 { font: 400 29px "Fraunces", Georgia, serif; margin: 0 0 11px; }
+.welcome p { color: #b2cece; font-size: 12px; line-height: 1.9; margin: 0 0 23px; }
+.primary { border: 0; background: #d4e7b1; color: #173c38; padding: 15px 21px; border-radius: 9px; font-size: 12px; font-weight: 700; display: flex; gap: 13px; align-items: center; box-shadow: 0 5px 25px #002c3840; }
+.primary:hover { background: #e5f3c8; }
+.text-button { background: transparent; border: 0; color: #b1cdcb; font-size: 10px; padding: 14px; text-decoration: underline; text-underline-offset: 4px; }
+.scene-bottom { bottom: 24px; right: auto; gap: 20px; font-size: 12px; color: #c4dfdd; }
+.scene-bottom > div { display: flex; align-items: center; gap: 9px; }
+.live-dot { width: 6px; height: 6px; background: #d5e7b3; border-radius: 50%; box-shadow: 0 0 12px #d5e7b366; }
+.animal-count { background: #052c3966; padding: 9px 13px; border-radius: 8px; }
+.animal-count strong { font-weight: 500; margin-right: 5px; color: #e1edb8; }
+.rare-count { margin-left: 6px; color: #f3d48a; }
+.rare-banner { position: absolute; top: 18%; left: 50%; transform: translate(-50%, -10px); opacity: 0; pointer-events: none; padding: 14px 24px; border-radius: 40px; background: #0a2f3dcc; border: 1px solid #f3d48a66; color: #f7e3ad; font: 400 clamp(17px, 2.4vw, 24px) "Fraunces", Georgia, serif; text-align: center; max-width: calc(100% - 40px); }
+.rare-banner.show { animation: rare-arrival 4s ease forwards; }
+@keyframes rare-arrival { 0% { opacity: 0; transform: translate(-50%, -10px); } 12%, 75% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; transform: translate(-50%, 0); } }
+.settings { position: fixed; z-index: 2; bottom: 18px; right: 22px; width: 390px; max-width: calc(100% - 36px); max-height: calc(100dvh - 110px); overflow: auto; border: 1px solid #91b9bc40; border-radius: 13px; background: #082a36ed; box-shadow: 0 8px 35px #00182044; }
+.settings summary { cursor: pointer; padding: 16px 20px; font-size: 12px; color: #d5e7b3; }
+.settings summary:focus-visible { outline: 2px solid #d7eda3; outline-offset: -4px; }
+.dashboard { display: grid; grid-template-columns: 1fr auto; gap: 24px 16px; align-items: center; padding: 10px 20px 20px; }
+.sound-panel { grid-column: 1 / -1; }
+.panel-heading, .sensitivity-panel label { display: flex; justify-content: space-between; align-items: center; font-size: 8px; letter-spacing: 1.3px; color: #c1d2d0; margin-bottom: 14px; gap: 8px; }
+.panel-heading > span:last-child, .sensitivity-panel label span { color: #97b3b7; font-size: 9px; letter-spacing: 0; }
+.meter { position: relative; height: 6px; background: linear-gradient(90deg, #355d56, #59623c 65%, #97624b); border-radius: 8px; }
+#sound-fill { height: 100%; width: 0; background: #d5e7b3; border-radius: inherit; transition: width .15s linear; }
+#threshold-marker { position: absolute; top: -3px; height: 12px; width: 2px; background: #fff9; left: 40%; }
+.meter-labels { display: flex; justify-content: space-between; font-size: 8px; color: #7f9fa5; margin-top: 9px; }
+.sensitivity-panel { min-width: 0; }
+input[type="range"] { width: 100%; accent-color: #d3e4b2; height: 6px; display: block; margin: 0; cursor: pointer; }
+.pause-button { background: #ffffff05; color: #c4d5d3; border: 1px solid #ffffff1c; border-radius: 8px; padding: 12px 15px; font-size: 12px; display: flex; gap: 9px; }
+.notice { text-align: center; color: #b6cdcf; font-size: 11px; margin: 0; padding: 12px 20px; line-height: 1.6; }
+.notice.error { color: #ffc1a8; }
+.demo-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 0 20px; font-size: 11px; color: #c1d2d0; }
+.demo-controls input { flex: 1; }
+.demo-controls[hidden] { display: none; }
+.demo-controls label, .demo-controls button { white-space: nowrap; }
+.privacy { text-align: center; margin: 0; padding: 0 20px 16px; font-size: 10px; color: #9dbbbf; }
+@media (max-width: 700px) {
+  .topbar { top: 18px; left: 18px; }
+  .brand { font-size: 20px; }
+  .scene-top, .scene-bottom { left: 17px; right: 17px; }
+  .scene-bottom { bottom: 85px; font-size: 10px; gap: 12px; }
+  h2 { font-size: 25px; }
+  .settings { right: 18px; bottom: 18px; }
+}
+@media (max-height: 480px) {
+  .welcome-icon { display: none; }
+  .welcome p { margin-bottom: 12px; }
+  .welcome { padding-top: 90px; padding-bottom: 70px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #sound-fill { transition: none; }
+  .rare-banner.show { animation-duration: .01s; animation-delay: 4s; opacity: 1; transform: translate(-50%, 0); }
+}
