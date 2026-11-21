@@ -49,6 +49,8 @@ test("le volume prend en compte les deux signes et la sensibilité abaisse le se
   assert.ok(thresholdFor(0) > thresholdFor(50));
   assert.ok(thresholdFor(50) > thresholdFor(100));
   assert.ok(thresholdFor(100) > 0);
+  assert.ok(thresholdFor(90) < thresholdFor(80) && thresholdFor(90) > thresholdFor(100));
+  assert.ok(thresholdFor(100) <= 0.003, "le maximum doit capter les micros mobiles faibles");
 });
 
 test("les animaux rares arrivent par paliers de silence continu", () => {

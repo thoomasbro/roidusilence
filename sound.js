@@ -20,8 +20,16 @@ export function rareAnimalsFor(silenceSeconds, animals = RARE_ANIMALS) {
   return animals.filter((animal) => silenceSeconds >= animal.seconds).map((animal) => animal.kind);
 }
 
+const BOOST_FROM = 80;
+const MIN_THRESHOLD = 0.003;
+
 export function thresholdFor(sensitivity) {
-  return 0.11 - (sensitivity / 100) * 0.095;
+  const linear = (value) => 0.11 - (value / 100) * 0.095;
+  if (sensitivity <= BOOST_FROM) return linear(sensitivity);
+  // Au-delà de 80 %, le seuil décroît exponentiellement pour les micros faibles (mobiles sans gain automatique).
+  const start = linear(BOOST_FROM);
+  const progress = (sensitivity - BOOST_FROM) / (100 - BOOST_FROM);
+  return start * (MIN_THRESHOLD / start) ** progress;
 }
 
 export function rms(samples) {
